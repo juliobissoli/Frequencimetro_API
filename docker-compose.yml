@@ -1,0 +1,11 @@
+version: '2'
+services:
+  db:
+     image: mysql:8.0.13
+     command: --max_allowed_packet=512M
+     environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: frequencimetro_api
+     environment:
+        - VIRTUAL_HOST=freq_db.docker
+        - VIRTUAL_PORT=3360
