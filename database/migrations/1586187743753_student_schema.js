@@ -12,9 +12,12 @@ class StudentSchema extends Schema {
       table.string('email', 254),
       table.string('telephone', 20),
       table.string('address', 254),
-      table.string('cpf', 20)
-      table.string('schedules', 255),
-      table.decimal('payment')
+      table.string('cpf', 20),
+      table.string('modality', 255),
+      table.string('situation', 255),
+      table.decimal('payment'),
+      table.decimal('hour'),
+      table.string('days', 200)
     })
   }
 
