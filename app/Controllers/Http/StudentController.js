@@ -1,5 +1,5 @@
-'use strict'
-const Student = use('App/Models/Student')
+"use strict";
+const Student = use("App/Models/Student");
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -18,12 +18,11 @@ class StudentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index () {
-    const students = Student.all()
+  async index() {
+    const students = await Student.all();
 
     return students;
   }
-
 
   /**
    * Create/save a new student.
@@ -33,16 +32,38 @@ class StudentController {
    * @param {Request0} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, auth,response }) {
-    const data = request.only(["name" ,"email" , "telephone","address" ,"cpf" ,"schedules" ,"payment"])
 
-    if(auth.user.type !== 'admin'){
-      return response.status(401).send({ error: 'Usuario não aturizado para essa operação' })
+  async store({ request, auth, response }) {
+    const data = request.only([
+      "name",
+      "email",
+      "telephone",
+      "address",
+      "cpf",
+      "modality",
+      "situation",
+      "payment",
+      "hour",
+      "days"
+    ]);
+
+
+    if (auth.user.type !== "admin") {
+      return response
+        .status(401)
+        .send({ error: "Usuario não aturizado para essa operação" });
     }
 
-    const user = await Student.create(data)
-
-    return user
+    const user = await Student.create(data);
+    // console.log(schedule);
+    // if (user) {
+    //   // user.schedules = await Schedules.create({...schedule, student_id: user.id });
+    //   await Database.table("schedules").insert({
+    //     ...schedule,
+    //     student_id: user.id,
+    //   });
+    // }
+    return user;
   }
 
   /**
@@ -54,8 +75,8 @@ class StudentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params }) {
-    const students = Student.findOrFail(params.id)
+  async show({ params }) {
+    const students = await Student.findOrFail(params.id);
 
     return students;
   }
@@ -68,16 +89,29 @@ class StudentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response, auth}) {
-    const data = request.all()
-    const students = Student.findOrFail(params.id)
+  async update({ params, request, response, auth }) {
+    const data = request.only([
+      "name",
+      "email",
+      "telephone",
+      "address",
+      "cpf",
+      "modality",
+      "situation",
+      "payment",
+      "hour",
+      "days"
+    ]);
+    const students = await Student.findOrFail(params.id);
 
-    if(auth.user.type !== 'admin'){
-      return response.status(401).send({ error: 'Usuario não aturizado para essa operação' })
+    if (auth.user.type !== "admin") {
+      return response
+        .status(401)
+        .send({ error: "Usuario não aturizado para essa operação" });
     }
-    
-    return await students.save(data)
-
+    students.merge(data)
+    await students.save(data);
+    return students
   }
 
   /**
@@ -88,15 +122,15 @@ class StudentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, auth, response}) {
-    const student = Student.find(params.id)
+  async destroy({ params, auth, response }) {
+    const student = await Student.find(params.id);
 
-    if(auth.user.type !== 'admin'){
-      return response.status(401).send({ error: 'Não autorizado' })
+    if (auth.user.type !== "admin") {
+      return response.status(401).send({ error: "Não autorizado" });
     }
 
-    await student.delete()
+    await student.delete();
   }
 }
 
-module.exports = StudentController
+module.exports = StudentController;
