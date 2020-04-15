@@ -1,5 +1,8 @@
 "use strict";
 const Student = use("App/Models/Student");
+const Attendance = use("App/Models/Attendance");
+
+const Database = use("Database");
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -18,10 +21,27 @@ class StudentController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index() {
-    const students = await Student.all();
+  async index({ request }) {
+    const today = new Date();
+    var date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
 
-    return students;
+    const data = request.only(["currentPage", "perPage"]);
+
+    var student = [];
+    student = await Student.query()
+      .with("attendances", (el) => {
+        el.where("date", date);
+      })
+      .orderBy("name", "cres")
+      .forPage(data.currentPage, data.perPage)
+      .fetch();
+
+    return student;
   }
 
   /**
@@ -44,9 +64,8 @@ class StudentController {
       "situation",
       "payment",
       "hour",
-      "days"
+      "days",
     ]);
-
 
     if (auth.user.type !== "admin") {
       return response
@@ -54,15 +73,8 @@ class StudentController {
         .send({ error: "Usuario não aturizado para essa operação" });
     }
 
-    const user = await Student.create(data);
-    // console.log(schedule);
-    // if (user) {
-    //   // user.schedules = await Schedules.create({...schedule, student_id: user.id });
-    //   await Database.table("schedules").insert({
-    //     ...schedule,
-    //     student_id: user.id,
-    //   });
-    // }
+    const user = await Student.findOrCreate({ cpf: data.cpf }, data);
+
     return user;
   }
 
@@ -77,7 +89,7 @@ class StudentController {
    */
   async show({ params }) {
     const students = await Student.findOrFail(params.id);
-
+    await students.load("attendances");
     return students;
   }
 
@@ -100,7 +112,7 @@ class StudentController {
       "situation",
       "payment",
       "hour",
-      "days"
+      "days",
     ]);
     const students = await Student.findOrFail(params.id);
 
@@ -109,9 +121,9 @@ class StudentController {
         .status(401)
         .send({ error: "Usuario não aturizado para essa operação" });
     }
-    students.merge(data)
+    students.merge(data);
     await students.save(data);
-    return students
+    return students;
   }
 
   /**
