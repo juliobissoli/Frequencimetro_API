@@ -30,18 +30,20 @@ class StudentController {
       "-" +
       today.getDate();
 
-    const data = request.only(["currentPage", "perPage"]);
+    const data = request.only(["currentPage", "perPage", "search"]);
 
     var student = [];
     student = await Student.query()
       .with("attendances", (el) => {
         el.where("date", date);
       })
+      .nearBy(data.search)
       .orderBy("name", "cres")
       .forPage(data.currentPage, data.perPage)
       .fetch();
 
-    return student;
+    const total = await Student.query().nearBy(data.search).getCount();
+    return {total, student};
   }
 
   /**

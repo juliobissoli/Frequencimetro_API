@@ -1,5 +1,6 @@
-'use strict'
+"use strict";
 const Attendance = use("App/Models/Attendance");
+const Database = use("Database");
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -18,12 +19,11 @@ class AttendanceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const attendances = await Attendance.all();
-   
+
     return attendances;
   }
-
 
   /**
    * Create/save a new attendance.
@@ -33,18 +33,23 @@ class AttendanceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-    const data = request.only(['student_id'])
-    const today = new Date()
-    var hour =  today.getHours() 
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    
-    const attendance = await Attendance.findOrCreate(
-      {...data, date  },
-      {...data, hour, date  }
-      )
+  async store({ request, response }) {
+    const data = request.only(["student_id"]);
+    const today = new Date();
+    var hour = today.getHours();
+    var date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
 
-    return attendance
+    const attendance = await Attendance.findOrCreate(
+      { ...data, date },
+      { ...data, hour, date }
+    );
+
+    return attendance;
   }
 
   /**
@@ -56,8 +61,7 @@ class AttendanceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show({ params, request, response, view }) {}
 
   /**
    * Render a form to update an existing attendance.
@@ -68,8 +72,7 @@ class AttendanceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
-  }
+  async edit({ params, request, response, view }) {}
 
   /**
    * Update attendance details.
@@ -79,8 +82,7 @@ class AttendanceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
-  }
+  async update({ params, request, response }) {}
 
   /**
    * Delete a attendance with id.
@@ -90,10 +92,12 @@ class AttendanceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-    const attendance = await Attendance.find(params.id)
-    await attendance.delete()
+  async destroy({ params, request, response }) {
+    const attendance = await Attendance.find(params.id);
+    await attendance.delete();
   }
+
+
 }
 
-module.exports = AttendanceController
+module.exports = AttendanceController;

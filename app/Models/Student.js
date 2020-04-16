@@ -5,9 +5,17 @@ const Model = use("Model");
 const Database = use("Database");
 
 class Student extends Model {
-  static scopeNearBy(query) {
-//    const t = Database.from("users").count("id");
-    return query.select("*", Database.raw("users"));
+
+  static scopeNearBy(query, search) {
+    if (search) {
+      if (!isNaN(search)) {
+        return query.where("id",search);
+      } 
+      else {
+        return query.where("name", "LIKE", `%${search}%`);
+      }
+    } else return query;
+
   }
 
   attendances() {
