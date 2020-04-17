@@ -40,9 +40,9 @@ class AttendanceController {
     var date =
       today.getFullYear() +
       "-" +
-      (today.getMonth() + 1) +
+      (today.getMonth() - 1) +
       "-" +
-      today.getDate();
+      (today.getDate() - 10);
 
     const attendance = await Attendance.findOrCreate(
       { ...data, date },
