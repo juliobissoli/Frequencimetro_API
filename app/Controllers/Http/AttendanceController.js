@@ -40,9 +40,9 @@ class AttendanceController {
     var date =
       today.getFullYear() +
       "-" +
-      (today.getMonth() - 1) +
+      (today.getMonth() + 1) +
       "-" +
-      (today.getDate() - 10);
+      today.getDate();
 
     const attendance = await Attendance.findOrCreate(
       { ...data, date },
@@ -61,7 +61,19 @@ class AttendanceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {}
+  async show({ params, request, response, view }) {
+
+    const data = request.only(['firstDay', 'lestDay'])
+    const student_id = params.id
+
+    const studentAtendancies = await Attendance.query()
+    .where('student_id', student_id) 
+    .whereBetween('created_at', [data.firstDay, data.lestDay])
+    .orderBy('created_at', 'desc')
+    .fetch()
+
+    return studentAtendancies
+  }
 
   /**
    * Render a form to update an existing attendance.

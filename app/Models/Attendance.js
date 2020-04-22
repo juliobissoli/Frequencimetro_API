@@ -4,8 +4,14 @@
 const Model = use("Model");
 
 class Attendance extends Model {
-  static scopeNearBy(query) {
-    return query.select("*").whereBetween("id", [0, 3]);
+  static get dates() {
+    return super.dates.concat(["created_at"]);
+  }
+
+  static castDates(field, value) {                                                                                                               
+    if (field === 'created_at') {                                                                                                                       
+      return value.format('YYYY-MM-DD')                                                                                                          
+    }                                                                                                                                            
   }
 
   students() {

@@ -40,21 +40,23 @@ class StatisticController {
     return {matriculated,attendanties,maxTotal, statis}
   }
 
-  async statisticsStudent({params}){
+  async statisticsStudent({params, request}){
+    const {min, max} = request.only(['min', 'max'])
     const id = params.id
     const statistics = []
     let maxTotal = 0
-    for(var i = 1; i<13; i++){
+
+    for(var i = min; i<max; i++){
       let t = '2020-'+ i
-      let total = await Database
+      let subTotal = await Database
       .from('attendances')
       .where('student_id', id)
       .andWhere('date', "LIKE", `%${t}%`)
       .getCount()
 
-      total > maxTotal ? maxTotal = total: null
+      subTotal > maxTotal ? maxTotal = subTotal: null
 
-      statistics.push({label: i, total})
+      statistics.push({label: i, subTotal, total: 0})
     }
 
     return {maxTotal, statistics}
