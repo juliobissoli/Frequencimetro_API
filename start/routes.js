@@ -15,8 +15,13 @@ Route.resource('attendances', 'AttendanceController').apiOnly().middleware('auth
 //Charge
 Route.resource('charge', 'ChargeController').apiOnly().middleware('auth')
 
+//Payment
+Route.resource('payment', 'PaymentController').apiOnly().middleware('auth')
+
 //Statistics
 Route.get('/statistcsDay', 'StatisticController.statistcsDay').middleware('auth')
 Route.get('/statisticsStudent/:id', 'StatisticController.statisticsStudent').middleware('auth')
+Route.get('/paymenToStudnet/:id', 'StatisticController.paymenToStudnet').middleware('auth')
+
 
 

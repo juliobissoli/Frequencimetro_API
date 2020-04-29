@@ -72,7 +72,17 @@ class ChargeController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {}
+  async show({ params, request, response, view }) {
+
+    const charges = await Charge.query()
+    .with('payments', (el) => {
+      el.where('student_id', params.id)
+    })
+    .orderBy('date_end', 'desc')
+    .fetch()
+
+    return charges
+  }
 
   /**
    * Render a form to update an existing charge.
@@ -118,7 +128,12 @@ class ChargeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {}
+  async destroy({ params, request, response }) {
+
+    const charge = await Charge.find(params.id)
+    
+    return charge.delete()
+  }
 }
 
 module.exports = ChargeController;
