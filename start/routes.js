@@ -22,6 +22,8 @@ Route.resource('payment', 'PaymentController').apiOnly().middleware('auth')
 Route.get('/statistcsDay', 'StatisticController.statistcsDay').middleware('auth')
 Route.get('/statisticsStudent/:id', 'StatisticController.statisticsStudent').middleware('auth')
 Route.get('/paymenToStudnet/:id', 'StatisticController.paymenToStudnet').middleware('auth')
+Route.put('/updatePercentPayment/:id', 'StatisticController.updatePercentPayment').middleware('auth')
+
 
 
 

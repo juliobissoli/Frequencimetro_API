@@ -1,6 +1,9 @@
 "use strict";
 
 const Payment = use("App/Models/Payment");
+const Database = use("Database");
+const Charge = use("App/Models/Charge");
+
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -20,8 +23,13 @@ class PaymentController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const payments = await Payment.all()
-    return payments
+    const payments = await Payment.query()
+      .with("students")
+      .with("charges")
+      .orderBy("created_at", "desc")
+      .forPage(1, 30)
+      .fetch();
+    return payments;
   }
 
   /**
@@ -49,9 +57,29 @@ class PaymentController {
 
     const payment = await Payment.create(data);
 
-    return payment
+    await this.updatePercent(data.charge_id);
+    
+
+    return payment;
   }
 
+  async updatePercent(id){
+    console.log('ta aquiiiiii')
+    //-----------Update the percent-----------//
+    const payForPeriod = await Database.from("charges")
+      .leftJoin("payments", "payments.charge_id", "charges.id")
+      .where("charges.id", id)
+      .getCount();
+
+    const students = await Database.from("students").getCount();
+
+    const charge = await Charge.findOrFail(id);
+
+    const payment = ((payForPeriod / students) * 100).toFixed(0);
+    charge.merge({ payment });
+
+    await charge.save({ payment });
+  }
   /**
    * Display a single payment.
    * GET payments/:id
@@ -62,14 +90,13 @@ class PaymentController {
    * @param {View} ctx.view
    */
   async show({ params, request, response, view }) {
-
     const payments = await Payment.query()
-    .where('student_id', params.id)
-    .with('charges')
-    .with('students')
-    .fetch()
+      .where("student_id", params.id)
+      .with("charges")
+      .with("students")
+      .fetch();
 
-    return payments
+    return payments;
   }
 
   /**
@@ -101,7 +128,13 @@ class PaymentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {}
+  async destroy({ params, request, response }) {
+    const payment = await Payment.find(params.id);
+
+    const res = payment.delete();
+
+    return res
+  }
 }
 
 module.exports = PaymentController;

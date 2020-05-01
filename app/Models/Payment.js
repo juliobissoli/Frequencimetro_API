@@ -4,6 +4,8 @@
 const Model = use("Model");
 
 class Payment extends Model {
+
+
   charges() {
     return this.belongsTo("App/Models/Charge");
   }

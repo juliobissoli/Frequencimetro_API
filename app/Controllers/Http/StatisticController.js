@@ -1,11 +1,11 @@
 "use strict";
 const Database = use("Database");
+const Charge = use("App/Models/Charge");
 
 class StatisticController {
   async statistcsDay({ request }) {
     const { min, max, day, date } = request.only(["min", "max", "day", "date"]);
     const t = day.split("-");
-    console.log(t);
     let maxTotal = 0;
     let matriculated = 0;
     let attendanties = 0;
@@ -61,13 +61,31 @@ class StatisticController {
   async paymenToStudnet() {
     return await Database.select("*")
       .from("charges")
-      .leftJoin("payments", "charges.id", "payments.charge_id")
+      .fullOuterJoin("payments", "charges.id", "payments.charge_id");
 
-      // .table('charges')
+    // .table('charges')
     // .innerJoin('payments', function () {
     //   this
     //     .on('payments.charge_id', 'charges.id')
     // })
+  }
+
+  async updatePercentPayment({ request, params }) {
+    const payForPeriod = await Database.from("charges")
+      .leftJoin("payments", "payments.charge_id", "charges.id")
+      .where("charges.id", params.id)
+      .getCount();
+
+    const students = await Database.from("students").getCount();
+
+    const charge = await Charge.findOrFail(params.id);
+
+    const payment = ((payForPeriod / students) * 100).toFixed(0);
+    charge.merge({ payment });
+
+    await charge.save({ payment });
+
+    return charge;
   }
 }
 

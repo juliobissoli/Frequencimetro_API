@@ -3,7 +3,6 @@
 const Charge = use("App/Models/Charge");
 const Database = use("Database");
 
-
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -22,12 +21,14 @@ class ChargeController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const {perPage, currentPage} = request.only(['perPage', 'currentPage'])
-    const charges = await Database
-    .from('charges')
-    .orderBy('date_end', 'desc')
-    .paginate(currentPage, perPage)
-    return charges;
+    const { perPage, currentPage } = request.only(["perPage", "currentPage"]);
+
+    const charges = await Charge.query()
+      .with("payments")
+      .orderBy("date_end", "desc")
+      .forPage(currentPage, perPage)
+      .fetch();
+    return { currentPage, perPage, data: charges };
   }
 
   /**
@@ -73,15 +74,16 @@ class ChargeController {
    * @param {View} ctx.view
    */
   async show({ params, request, response, view }) {
+    // const created_at = request.only(["created_at"]);
 
     const charges = await Charge.query()
-    .with('payments', (el) => {
-      el.where('student_id', params.id)
-    })
-    .orderBy('date_end', 'desc')
-    .fetch()
+      .with("payments", (el) => {
+        el.where("student_id", params.id);
+      })
+      .orderBy("date_end", "desc")
+      .fetch();
 
-    return charges
+    return charges;
   }
 
   /**
@@ -103,7 +105,7 @@ class ChargeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params,  auth, request, response }) {
+  async update({ params, auth, request, response }) {
     const data = request.only(["period", "date_end", "payment"]);
 
     const charge = await Charge.findOrFail(params.id);
@@ -129,10 +131,9 @@ class ChargeController {
    * @param {Response} ctx.response
    */
   async destroy({ params, request, response }) {
+    const charge = await Charge.find(params.id);
 
-    const charge = await Charge.find(params.id)
-    
-    return charge.delete()
+    return charge.delete();
   }
 }
 
