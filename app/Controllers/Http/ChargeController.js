@@ -21,11 +21,12 @@ class ChargeController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const { perPage, currentPage } = request.only(["perPage", "currentPage"]);
+    const { perPage, currentPage, period } = request.only(["perPage", "currentPage", "period"]);
 
     const charges = await Charge.query()
       .with("payments")
       .orderBy("date_end", "desc")
+      .perPeriod(period)
       .forPage(currentPage, perPage)
       .fetch();
     return { currentPage, perPage, data: charges };

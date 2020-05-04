@@ -4,7 +4,6 @@ const Payment = use("App/Models/Payment");
 const Database = use("Database");
 const Charge = use("App/Models/Charge");
 
-
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -23,13 +22,16 @@ class PaymentController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
+    let data = request.only(["charge_id"]);
+    console.log('ta certo ')
     const payments = await Payment.query()
+      .perPeriod(data.charge_id)
       .with("students")
       .with("charges")
       .orderBy("created_at", "desc")
       .forPage(1, 30)
       .fetch();
-    return payments;
+    return payments ;
   }
 
   /**
@@ -58,13 +60,11 @@ class PaymentController {
     const payment = await Payment.create(data);
 
     await this.updatePercent(data.charge_id);
-    
 
     return payment;
   }
 
-  async updatePercent(id){
-    console.log('ta aquiiiiii')
+  async updatePercent(id) {
     //-----------Update the percent-----------//
     const payForPeriod = await Database.from("charges")
       .leftJoin("payments", "payments.charge_id", "charges.id")
@@ -133,7 +133,7 @@ class PaymentController {
 
     const res = payment.delete();
 
-    return res
+    return res;
   }
 }
 

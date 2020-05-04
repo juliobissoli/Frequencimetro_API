@@ -17,6 +17,20 @@ class Charge extends Model {
   payments() {
     return this.hasMany("App/Models/Payment");
   }
+
+  
+
+  static scopePerPeriod(query, search) {
+    if (search) {
+      if (!isNaN(search)) {
+        return query.where("id",search);
+      } 
+      else {
+        return query.where("period", "LIKE", `%${search}%`);
+      }
+    } else return query;
+
+  }
 }
 
 module.exports = Charge;
