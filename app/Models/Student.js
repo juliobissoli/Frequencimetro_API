@@ -18,8 +18,13 @@ class Student extends Model {
 
   }
 
+  //Relacionamentos entre tabelas
   attendances() {
     return this.hasMany("App/Models/Attendance");
+  }
+
+  payments() {
+    return this.hasMany("App/Models/Payment");
   }
 }
 

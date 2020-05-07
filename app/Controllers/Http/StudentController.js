@@ -2,7 +2,6 @@
 const Student = use("App/Models/Student");
 const Attendance = use("App/Models/Attendance");
 
-const Database = use("Database");
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
