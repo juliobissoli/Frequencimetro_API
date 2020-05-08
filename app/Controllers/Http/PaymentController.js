@@ -23,7 +23,6 @@ class PaymentController {
    */
   async index({ request, response, view }) {
     let data = request.only(["charge_id"]);
-    console.log('ta certo ')
     const payments = await Payment.query()
       .perPeriod(data.charge_id)
       .with("students")
