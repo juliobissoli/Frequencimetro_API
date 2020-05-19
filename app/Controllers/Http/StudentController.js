@@ -22,19 +22,18 @@ class StudentController {
    */
   async index({ request }) {
     const today = new Date();
-    var date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
+    var lestDate = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()+1}`
+    var fristDate = `${today.getFullYear()}-${today.getMonth()+1}-01`
 
+    console.log(lestDate ,fristDate)
     const data = request.only(["currentPage", "perPage", "search"]);
-
+    // pick
+    // where("date", date);
     var student = [];
     student = await Student.query()
       .with("attendances", (el) => {
-        el.where("date", date);
+        el.whereBetween('created_at', [fristDate, lestDate])
+          .orderBy("created_at", "desc")
       })
       .nearBy(data.search)
       .orderBy("name", "cres")
