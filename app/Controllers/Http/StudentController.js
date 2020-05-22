@@ -25,7 +25,6 @@ class StudentController {
     var lestDate = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()+1}`
     var fristDate = `${today.getFullYear()}-${today.getMonth()+1}-01`
 
-    console.log(lestDate ,fristDate)
     const data = request.only(["currentPage", "perPage", "search"]);
     // pick
     // where("date", date);
@@ -116,11 +115,11 @@ class StudentController {
     ]);
     const students = await Student.findOrFail(params.id);
 
-    if (auth.user.type !== "admin") {
-      return response
-        .status(401)
-        .send({ error: "Usuario não aturizado para essa operação" });
-    }
+    // if (auth.user.type !== "admin") {
+    //   return response
+    //     .status(401)
+    //     .send({ error: "Usuario não aturizado para essa operação" });
+    // }
     students.merge(data);
     await students.save(data);
     return students;
