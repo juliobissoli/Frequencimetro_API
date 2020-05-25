@@ -7,6 +7,7 @@ Route.post('/users', 'UserController.create').middleware('auth')
 Route.get('/listUser', 'UserController.index')
 Route.get('/showUser/:id', 'UserController.show')
 Route.delete('/user/:id', 'UserController.destroy')
+Route.put('/user/:id', 'UserController.update').middleware('auth')
 
 
 
