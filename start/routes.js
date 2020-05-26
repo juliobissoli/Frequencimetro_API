@@ -6,7 +6,7 @@ const Route = use('Route')
 Route.post('/users', 'UserController.create').middleware('auth')
 Route.get('/listUser', 'UserController.index')
 Route.get('/showUser/:id', 'UserController.show')
-Route.delete('/user/:id', 'UserController.destroy')
+Route.delete('/user/:id', 'UserController.destroy').middleware('auth')
 Route.put('/user/:id', 'UserController.update').middleware('auth')
 
 
