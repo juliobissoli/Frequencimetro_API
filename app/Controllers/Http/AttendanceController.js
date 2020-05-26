@@ -37,12 +37,7 @@ class AttendanceController {
     const data = request.only(["student_id"]);
     const today = new Date();
     var hour = today.getHours();
-    var date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
+    var date = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()}`
 
     const attendance = await Attendance.findOrCreate(
       { ...data, date },
@@ -51,6 +46,7 @@ class AttendanceController {
 
     return attendance;
   }
+
 
   /**
    * Display a single attendance.

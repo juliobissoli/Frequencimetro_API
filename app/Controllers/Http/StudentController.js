@@ -22,19 +22,17 @@ class StudentController {
    */
   async index({ request }) {
     const today = new Date();
-    var date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
+    var lestDate = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()+1}`
+    var fristDate = `${today.getFullYear()}-${today.getMonth()+1}-01`
 
     const data = request.only(["currentPage", "perPage", "search"]);
-
+    // pick
+    // where("date", date);
     var student = [];
     student = await Student.query()
       .with("attendances", (el) => {
-        el.where("date", date);
+        el.whereBetween('created_at', [fristDate, lestDate])
+          .orderBy("created_at", "desc")
       })
       .nearBy(data.search)
       .orderBy("name", "cres")
@@ -117,11 +115,11 @@ class StudentController {
     ]);
     const students = await Student.findOrFail(params.id);
 
-    if (auth.user.type !== "admin") {
-      return response
-        .status(401)
-        .send({ error: "Usuario não aturizado para essa operação" });
-    }
+    // if (auth.user.type !== "admin") {
+    //   return response
+    //     .status(401)
+    //     .send({ error: "Usuario não aturizado para essa operação" });
+    // }
     students.merge(data);
     await students.save(data);
     return students;
