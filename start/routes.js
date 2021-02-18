@@ -3,7 +3,8 @@
 const Route = use('Route')
 
 //Admin
-Route.post('/users', 'UserController.create')
+Route.post('/users', 'UserController.create').middleware('auth')
+Route.post('/add_admin', 'UserController.addAdmin')
 Route.get('/listUser', 'UserController.index')
 Route.get('/showUser/:id', 'UserController.show')
 Route.delete('/user/:id', 'UserController.destroy').middleware('auth')
