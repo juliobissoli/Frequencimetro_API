@@ -5,17 +5,17 @@ const User = use("App/Models/User");
 class UserController {
   async create({ request, auth, response }) {
     const data = request.only(["name", "email", "password", "type"]);
-    if (auth.user.type !== "admin") {
-      return response
-        .status(401)
-        .send({ error: "Usuario não aturizado para essa operação" });
-    } 
+    // if (auth.user.type !== "admin") {
+    //   return response
+    //     .status(401)
+    //     .send({ error: "Usuario não aturizado para essa operação" });
+    // } 
     
-    else {
+    // else {
       const user = await User.create(data);
 
       return user;
-    }
+    // }
   }
 
   async index() {
