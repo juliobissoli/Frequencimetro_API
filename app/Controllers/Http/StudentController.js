@@ -23,8 +23,8 @@ class StudentController {
   async index({ request }) {
     const today = new Date();
     let month = today.getMonth()+1
-    var lestDate = `${today.getFullYear()}-${month > 9 ? month : '0'+month}-${today.getDate()+1}`
-    var fristDate = `${today.getFullYear()}-${month > 9 ? month : '0'+month}-01`
+    var lestDate = `${today.getFullYear()}-${month > 9 ? month : '0'+month}-${today.getDate()} 23:59`
+    var fristDate = `${today.getFullYear()}-${month > 9 ? month : '0'+month}-01 00:00`
 
     const data = request.only(["currentPage", "perPage", "search"]);
     // pick
